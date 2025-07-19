@@ -22,7 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'token',
-        'coin_count'
+        'coin_count',
+        'device_id',
     ];
 
     /**

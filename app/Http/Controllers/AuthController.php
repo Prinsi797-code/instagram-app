@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\GetCoupon;
 use App\Models\User;
 use Carbon\Exceptions\Exception;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+
+    // api Route
     public function Register(Request $request)
     {
         try {
@@ -38,7 +41,7 @@ class AuthController extends Controller
 
             // Return success response
             return response()->json([
-                'success' => true,
+                'success' => 'success',
                 'message' => 'User registered successfully',
                 'data' => [
                     'device_id' => $user->device_id,
@@ -49,17 +52,26 @@ class AuthController extends Controller
 
         } catch (ValidationException $e) {
             return response()->json([
-                'success' => false,
+                'success' => 'error',
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
 
         } catch (Exception $e) {
             return response()->json([
-                'success' => false,
+                'success' => 'error',
                 'message' => 'Registration failed',
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+    public function getCoupon(Request $request)
+    {
+        $coupon = GetCoupon::get();
+        return response()->json([
+            'success' => 'success',
+            'message' => 'Get Coupon Successfully',
+            'data' => $coupon
+        ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InstagramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('register', [AuthController::class, 'Register'])->name('register');
+Route::get('getCoupon', [AuthController::class, 'getCoupon'])->name('getcoupon');
+
+
+
+
+
+Route::post('/instagram', [InstagramController::class, 'handle']);
