@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GetCouponController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
 });
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Protected routes (accessible only to authenticated users)
 Route::middleware('auth')->group(function () {
@@ -38,4 +39,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/coupons/{id}/edit', [GetCouponController::class, 'edit'])->name('coupons.edit');
     Route::put('/coupons/{id}', [GetCouponController::class, 'update'])->name('coupons.update');
     Route::delete('/coupons/{id}', [GetCouponController::class, 'destroy'])->name('coupons.destroy');
+
+    Route::get('/setting', [SettingController::class, 'setting'])->name('setting');
+    Route::get('/setting-view', [SettingController::class, 'viewSetting'])->name('setting.view');
+    Route::post('/setting-store', [SettingController::class, 'store'])->name('setting.store');
+
+    Route::get('/setting/{id}/edit', [SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/setting/{id}', [SettingController::class, 'update'])->name('settings.update');
+    Route::delete('/setting/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
+
 });

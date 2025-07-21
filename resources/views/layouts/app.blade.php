@@ -12,6 +12,104 @@
     <link rel="stylesheet" href="{{ asset('assets/css/ready.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}">
 </head>
+<style>
+    /* Toast Notification Styles */
+    .toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 400px;
+    }
+
+    .custom-toast {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        margin-bottom: 10px;
+        overflow: hidden;
+        animation: slideInRight 0.4s ease-out;
+    }
+
+    .custom-toast.success {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        padding: 5px;
+    }
+
+    .custom-toast.error {
+        background: linear-gradient(135deg, #f44336, #da190b);
+        color: white;
+    }
+
+    .custom-toast.info {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+    }
+
+    .custom-toast .toast-header {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-weight: 600;
+    }
+
+    .custom-toast .toast-body {
+        padding: 15px 20px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .custom-toast .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+    }
+
+    .custom-toast .btn-close:hover {
+        opacity: 1;
+    }
+
+    /* Progress bar for auto-hide */
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        transition: width linear;
+    }
+
+    .toast-progress.success {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .toast-progress.error {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .toast-progress.info {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .toast-hide {
+        animation: slideOutRight 0.3s ease-in forwards;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .toast-container {
+            left: 20px;
+            right: 20px;
+            max-width: none;
+        }
+
+        .custom-toast {
+            margin-bottom: 8px;
+        }
+    }
+</style>
+
 <?php
 $userCount = App\Models\User::count();
 $couponCount = App\Models\GetCoupon::count();
@@ -118,6 +216,35 @@ $couponCount = App\Models\GetCoupon::count();
                     {{-- </ul> --}}
                 </div>
             </nav>
+            <div class="toast-container" id="toastContainer">
+                <!-- Success Toast -->
+                @if (session('success'))
+                    <div class="toast custom-toast success show" role="alert" data-auto-hide="5000">
+                        <div class="toast-header">
+                            <i class="la la-exclamation-circle me-2"></i>
+                            <strong class="me-auto">Success</strong>
+                        </div>
+                        <div class="toast-body">
+                            {{ session('success') }}
+                        </div>
+                        <div class="toast-progress success"></div>
+                    </div>
+                @endif
+
+                <!-- Error Toast -->
+                @if (session('error'))
+                    <div class="toast custom-toast error show" role="alert" data-auto-hide="6000">
+                        <div class="toast-header">
+                            <i class="la la-exclamation-circle me-2"></i>
+                            <strong class="me-auto">Error</strong>
+                        </div>
+                        <div class="toast-body">
+                            {{ session('error') }}
+                        </div>
+                        <div class="toast-progress error"></div>
+                    </div>
+                @endif
+            </div>
         </div>
         <div class="sidebar">
             <div class="scrollbar-inner sidebar-wrapper">
@@ -144,9 +271,23 @@ $couponCount = App\Models\GetCoupon::count();
                             <span class="badge badge-count">{{ $couponCount }}</span>
                         </a>
                     </li>
+                    <li class="nav-item active">
+                        <a href="{{ route('setting') }}">
+                            <i class="la la-cog"></i>
+                            <p>Settings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="{{ route('logout') }}">
+                            <i class="la la-unlock"></i>
+                            <p>Logout</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
+
+
         <div class="main-panel">
             @yield('content')
         </div>
@@ -644,5 +785,33 @@ $couponCount = App\Models\GetCoupon::count();
 <script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
 <script src="{{ asset('assets/js/ready.min.js') }}"></script>
 <script src="{{ asset('assets/js/demo.js') }}"></script>
+
+<script>
+    function hideToast(toast) {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500); // Smooth removal
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toasts = document.querySelectorAll('.toast');
+
+        toasts.forEach((toast) => {
+            const progressBar = toast.querySelector('.toast-progress');
+            const duration = parseInt(toast.getAttribute('data-auto-hide')) || 1000;
+
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.transition = `width ${duration}ms linear`;
+                setTimeout(() => {
+                    progressBar.style.width = '0%';
+                }, 100);
+            }
+
+            setTimeout(() => hideToast(toast), duration);
+
+            toast.querySelector('.btn-close')?.addEventListener('click', () => hideToast(toast));
+        });
+    });
+</script>
 
 </html>

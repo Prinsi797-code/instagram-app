@@ -20,11 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('register', [AuthController::class, 'Register'])->name('register');
+
 Route::get('getCoupon', [AuthController::class, 'getCoupon'])->name('getcoupon');
 
 
 
 
-
+Route::post('register', [AuthController::class, 'Register'])->name('register');
 Route::post('/instagram', [InstagramController::class, 'handle']);
