@@ -13,8 +13,9 @@ class UserController extends Controller
     {
         $userCount = User::count();
         $couponCount = GetCoupon::count();
-        return view('Home', compact('userCount', 'couponCount'));
+        return view('home', compact('userCount', 'couponCount'));
     }
+
     public function Users(Request $request)
     {
         $users = User::with('tokens')->get();
