@@ -78,13 +78,14 @@ class AuthController extends Controller
             if (!$user) {
                 \Log::error('Unauthorized access attempt');
                 return response()->json([
-                    'success' => false,
+                    'success' => "error",
                     'message' => 'Invalid or missing authentication token'
                 ], 401);
             }
 
             return response()->json([
-                'error' => false,
+                'success' => "success",
+                'message' => 'user coin get successfully',
                 'data' => [
                     'device_id' => $user->device_id,
                     'coin_count' => $user->coin_count,
@@ -95,7 +96,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             \Log::error('Error fetching user details: ' . $e->getMessage());
             return response()->json([
-                'success' => false,
+                'success' => "error",
                 'message' => 'An error occurred while fetching user details'
             ], 500);
         }
