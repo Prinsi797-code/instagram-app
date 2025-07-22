@@ -37,7 +37,7 @@
                                 @else
                                     @foreach ($purchaseDetails as $purchaseDetail)
                                         <tr>
-                                            {{-- <td>{{ $purchaseDetail->id }}</td> --}}
+                                            <td>{{ $purchaseDetail->id }}</td>
                                             <td>{{ $purchaseDetail->product_id }}</td>
                                             <td>{{ $purchaseDetail->device_id }}</td>
                                             <td>

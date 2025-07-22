@@ -23,6 +23,7 @@ class PurchaseController extends Controller
                 'users.device_id',
                 'users.coin_count',
                 'user_purchase.product_id',
+                'user_purchase.id',
                 'get_coupons.coins',
                 'get_coupons.giveaway',
                 'get_coupons.pkg_image_url',
