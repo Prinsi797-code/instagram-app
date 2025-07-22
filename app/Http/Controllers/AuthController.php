@@ -13,7 +13,6 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-
     // api Route
     public function Register(Request $request)
     {
@@ -22,15 +21,31 @@ class AuthController extends Controller
             $existingUser = User::where('device_id', $request->device_id)->first();
 
             if ($existingUser) {
-                // Retrieve an existing token or generate a new one
-                $token = $existingUser->tokens()->first()?->plainTextToken ?? $existingUser->createToken('auth_token')->plainTextToken;
+                // Check if user already has a valid token
+                $existingToken = $existingUser->tokens()->first();
 
+                if (!$existingToken) {
+                    // If no token exists, create one
+                    $token = $existingUser->createToken('auth_token')->plainTextToken;
+
+                    return response()->json([
+                        'success' => 'success',
+                        'message' => 'Device already registered, token generated',
+                        'data' => [
+                            'device_id' => $existingUser->device_id,
+                            'bearer_token' => $token,
+                            'coin_count' => $existingUser->coin_count,
+                        ]
+                    ], 200);
+                }
+
+                // If token already exists
                 return response()->json([
                     'success' => 'success',
-                    'message' => 'Device already registered',
+                    'message' => 'Device already registered with active token',
                     'data' => [
                         'device_id' => $existingUser->device_id,
-                        'bearer_token' => $token,
+                        'bearer_token' => null, // Don't return existing token
                         'coin_count' => $existingUser->coin_count,
                     ]
                 ], 200);
@@ -47,7 +62,7 @@ class AuthController extends Controller
                 'coin_count' => 15,
             ]);
 
-            // Generate bearer token
+            // Generate bearer token (only for new users)
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // Return success response
@@ -62,7 +77,7 @@ class AuthController extends Controller
             ], 201);
 
         } catch (ValidationException $e) {
-            // Handle other validation errors
+            // Handle validation errors
             return response()->json([
                 'success' => 'error',
                 'message' => 'Validation failed',

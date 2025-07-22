@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GetCouponController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -50,5 +51,6 @@ Route::middleware('auth')->group(function () {
 
     // purchase Use data
     Route::get('/purchase', [PurchaseController::class, 'purchaseUser'])->name('purchase.user');
+
 
 });
