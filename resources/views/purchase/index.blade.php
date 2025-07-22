@@ -44,7 +44,7 @@
                                                 @if ($purchaseDetail->pkg_image_url)
                                                     <img src="{{ asset($purchaseDetail->pkg_image_url) }}"
                                                         class="card-img-top" alt="Package Image"
-                                                        style="height: 200px; object-fit: cover;">
+                                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                                                 @else
                                                     <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center"
                                                         style="height: 200px;">
