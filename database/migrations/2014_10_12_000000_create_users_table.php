@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('device_id')->nullable();
             $table->string('token')->nullable();
             $table->integer('coin_count')->default(0);
+            $table->string('run')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

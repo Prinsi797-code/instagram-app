@@ -21,8 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('getCoupon', [AuthController::class, 'getCoupon'])->name('getcoupon');
-
+Route::get('getcoupon', [AuthController::class, 'getCoupon'])->name('getcoupon');
+Route::get('usercoin', [AuthController::class, 'getUserDetails'])->name('user.coin');
 
 
 

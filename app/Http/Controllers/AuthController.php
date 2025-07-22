@@ -65,6 +65,44 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    //api
+
+    public function getUserDetails(Request $request)
+    {
+        try {
+            // Get the authenticated user
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => 'Unauthorized',
+                    'message' => 'Invalid or missing authentication token'
+                ], 401);
+            }
+
+            // Return user details
+            return response()->json([
+                'success' => 'success',
+                'message' => 'User Coin get successfully',
+                'data' => [
+                    'device_id' => $user->device_id,
+                    'coin_count' => $user->coin_count,
+                    'run' => $user->run
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error fetching user details: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => "error",
+                'message' => 'An error occurred while fetching user details'
+            ], 500);
+        }
+    }
+
     public function getCoupon(Request $request)
     {
         $coupon = GetCoupon::get();
