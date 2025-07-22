@@ -71,21 +71,20 @@ class AuthController extends Controller
 
     public function getUserDetails(Request $request)
     {
+        \Log::info('Auth User: ' . json_encode(Auth::user()));
         try {
-            // Get the authenticated user
             $user = Auth::user();
 
             if (!$user) {
+                \Log::error('Unauthorized access attempt');
                 return response()->json([
-                    'success' => 'Unauthorized',
+                    'success' => false,
                     'message' => 'Invalid or missing authentication token'
                 ], 401);
             }
 
-            // Return user details
             return response()->json([
-                'success' => 'success',
-                'message' => 'User Coin get successfully',
+                'error' => false,
                 'data' => [
                     'device_id' => $user->device_id,
                     'coin_count' => $user->coin_count,
@@ -94,11 +93,9 @@ class AuthController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            // Log the error
             \Log::error('Error fetching user details: ' . $e->getMessage());
-
             return response()->json([
-                'success' => "error",
+                'success' => false,
                 'message' => 'An error occurred while fetching user details'
             ], 500);
         }

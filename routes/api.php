@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::get('getcoupon', [AuthController::class, 'getCoupon'])->name('getcoupon');
-Route::get('usercoin', [AuthController::class, 'getUserDetails'])->name('user.coin');
 
+Route::middleware('auth:sanctum')->get('/usercoin', [AuthController::class, 'getUserDetails'])->name('user.coin');
 
 
 Route::post('register', [AuthController::class, 'Register'])->name('register');
