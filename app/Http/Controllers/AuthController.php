@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GetCoupon;
 use App\Models\User;
+use App\Models\UserPurchase;
 use Carbon\Exceptions\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,15 +22,6 @@ class AuthController extends Controller
             $request->validate([
                 'device_id' => 'required|string|unique:users,device_id'
             ]);
-
-            // Check if device is already registered
-            $existingUser = User::where('device_id', $request->device_id)->first();
-            if ($existingUser) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Device already registered'
-                ], 400);
-            }
 
             // Create new user
             $user = User::create([
@@ -52,6 +44,26 @@ class AuthController extends Controller
             ], 201);
 
         } catch (ValidationException $e) {
+            // Check if the validation error is due to duplicate device_id
+            if (isset($e->errors()['device_id']) && in_array('The device_id has already been taken.', $e->errors()['device_id'])) {
+                // Fetch the existing user
+                $existingUser = User::where('device_id', $request->device_id)->first();
+
+                // Retrieve an existing token or generate a new one
+                $token = $existingUser->tokens()->first()?->plainTextToken ?? $existingUser->createToken('auth_token')->plainTextToken;
+
+                return response()->json([
+                    'success' => 'success', // Keep success status consistent
+                    'message' => 'Device already registered',
+                    'data' => [
+                        'device_id' => $existingUser->device_id,
+                        'bearer_token' => $token,
+                        'coin_count' => $existingUser->coin_count,
+                    ]
+                ], 200); // Use 200 since it's not a new resource creation
+            }
+
+            // Handle other validation errors
             return response()->json([
                 'success' => 'error',
                 'message' => 'Validation failed',
@@ -63,6 +75,79 @@ class AuthController extends Controller
                 'success' => 'error',
                 'message' => 'Registration failed',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function purchaseCoin(Request $request)
+    {
+        try {
+            // Validate request
+            $request->validate([
+                'product_id' => 'required|string|exists:get_coupons,product_id',
+            ]);
+
+            // Get authenticated user
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json([
+                    'success' => 'error',
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
+            // Fetch the coupon/package details
+            $coupon = GetCoupon::where('product_id', $request->product_id)->first();
+            if (!$coupon) {
+                return response()->json([
+                    'success' => 'error',
+                    'message' => 'Package not found',
+                ], 404);
+            }
+
+            // Create purchase record
+            $purchase = UserPurchase::create([
+                'device_id' => $user->device_id,
+                'product_id' => $request->product_id,
+            ]);
+
+            // Update user's coin count (base coins + giveaway)
+            $totalCoins = $coupon->coins + ($coupon->giveaway ?? 0);
+            $user->coin_count += $totalCoins;
+            $user->save();
+
+            // Return success response
+            return response()->json([
+                'success' => 'success',
+                'message' => 'Purchase successful',
+                'data' => [
+                    'device_id' => $user->device_id,
+                    'product_id' => $coupon->product_id,
+                    'coins_added' => $totalCoins,
+                    'new_coin_count' => $user->coin_count,
+                    'package_details' => [
+                        'title' => $coupon->title,
+                        'coins' => $coupon->coins,
+                        'giveaway' => $coupon->giveaway,
+                        'pkg_image_url' => $coupon->pkg_image_url,
+                        'label_popular' => $coupon->label_popular,
+                        'label_color' => $coupon->label_color,
+                        'price_per_coin' => $coupon->price_per_coin,
+                        'total_price' => $coupon->total_price,
+                    ],
+                ],
+            ], 201);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => 'error',
+                'message' => 'Purchase failed',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

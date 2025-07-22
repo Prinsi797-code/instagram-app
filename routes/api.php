@@ -25,6 +25,7 @@ Route::get('getcoupon', [AuthController::class, 'getCoupon'])->name('getcoupon')
 
 Route::middleware('auth:sanctum')->get('/usercoin', [AuthController::class, 'getUserDetails'])->name('user.coin');
 
+Route::middleware('auth:sanctum')->post('/purchase/coin', [AuthController::class, 'purchaseCoin'])->name('purchase.coin');
 
 Route::post('register', [AuthController::class, 'Register'])->name('register');
 Route::post('/instagram', [InstagramController::class, 'handle']);
