@@ -36,19 +36,6 @@ class PurchaseController extends Controller
             })
             ->get();
 
-        // Check if data exists
-        if ($purchaseDetails->isEmpty()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'No purchase details found',
-                'data' => []
-            ], 404);
-        }
-        return view('purchase.index');
-        // Return the JSON response
-        // return response()->json([
-        //     'status' => 'success',
-        //     'data' => $purchaseDetails
-        // ], 200);
+        return view('purchase.index', compact('purchaseDetails'));
     }
 }

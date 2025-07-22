@@ -277,6 +277,14 @@ $couponCount = App\Models\GetCoupon::count();
                             <p>Settings</p>
                         </a>
                     </li>
+
+                    <li class="nav-item active">
+                        <a href="{{ route('purchase.user') }}">
+                            <i class="la la-cog"></i>
+                            <p>Purchase User</p>
+                        </a>
+                    </li>
+
                     <li class="nav-item active">
                         <a href="{{ route('logout') }}">
                             <i class="la la-unlock"></i>

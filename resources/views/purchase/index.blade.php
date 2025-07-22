@@ -8,9 +8,9 @@
             <div class="card card-tasks">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">Purchase Coins</h4>
-                    <a href="{{ route('setting.view') }}" class="btn btn-sm btn-primary">
+                    {{-- <a href="{{ route('setting.view') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> Add
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body">
                     <div class="table-full-width">
@@ -18,19 +18,46 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Product Id</th>
+                                    <th>Device Id</th>
+                                    <th>Image</th>
+                                    <th>Coin Count</th>
+                                    <th>Coint</th>
                                     <th>Giveaway</th>
-                                    <th>Coins</th>
-                                    <th>Action</th>
+                                    <th>PricePerCoin</th>
+                                    <th>Total Price</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($purchaseDetails as $purchaseDetail)
-                                    <tr>
-                                        <td>{{ $purchaseDetail->id }}</td>
-                                        <td>{{ $purchaseDetail->giveaway ?? 'N/A' }}</td>
-                                        <td>{{ $purchaseDetail->coins ?? 0 }}</td>
-                                        <td class="td-actions text-right">
-                                            {{-- <div class="form-button-action">
+
+                                @if ($purchaseDetails->isEmpty())
+                                    <div class="alert alert-danger" role="alert">
+                                        No purchase details found.
+                                    </div>
+                                @else
+                                    @foreach ($purchaseDetails as $purchaseDetail)
+                                        <tr>
+                                            <td>{{ $purchaseDetail->id }}</td>
+                                            <td>{{ $purchaseDetail->product_id }}</td>
+                                            <td>{{ $purchaseDetail->device_id }}</td>
+                                            <td>
+                                                @if ($purchaseDetail->pkg_image_url)
+                                                    <img src="{{ $purchaseDetail->pkg_image_url }}" class="card-img-top"
+                                                        alt="Package Image" style="height: 200px; object-fit: cover;">
+                                                @else
+                                                    <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center"
+                                                        style="height: 200px;">
+                                                        No Image Available
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td>{{ $purchaseDetail->coin_count }}</td>
+                                            <td>{{ $purchaseDetail->coins }}</td>
+                                            <td>{{ $purchaseDetail->giveaway ?? 'None' }}</td>
+                                            <td>{{ number_format($purchaseDetail->price_per_coin, 2) }}</td>
+                                            <td>{{ number_format($detail->total_price, 2) }}</td>
+                                            <td class="td-actions text-right">
+                                                {{-- <div class="form-button-action">
                                                 <a href="{{ route('settings.edit', $purchaseDetail->id) }}"
                                                     class="btn btn-link btn-simple-primary" data-toggle="tooltip"
                                                     title="Edit Setting">
@@ -47,9 +74,10 @@
                                                     </button>
                                                 </form>
                                             </div> --}}
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
