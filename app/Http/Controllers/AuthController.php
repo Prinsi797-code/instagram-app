@@ -18,7 +18,25 @@ class AuthController extends Controller
     public function Register(Request $request)
     {
         try {
-            // Validate request
+            // Check if device_id already exists
+            $existingUser = User::where('device_id', $request->device_id)->first();
+
+            if ($existingUser) {
+                // Retrieve an existing token or generate a new one
+                $token = $existingUser->tokens()->first()?->plainTextToken ?? $existingUser->createToken('auth_token')->plainTextToken;
+
+                return response()->json([
+                    'success' => 'success',
+                    'message' => 'Device already registered',
+                    'data' => [
+                        'device_id' => $existingUser->device_id,
+                        'bearer_token' => $token,
+                        'coin_count' => $existingUser->coin_count,
+                    ]
+                ], 200);
+            }
+
+            // Validate request for new user
             $request->validate([
                 'device_id' => 'required|string|unique:users,device_id'
             ]);
@@ -26,7 +44,7 @@ class AuthController extends Controller
             // Create new user
             $user = User::create([
                 'device_id' => $request->device_id,
-                'coin_count' => 12,
+                'coin_count' => 15,
             ]);
 
             // Generate bearer token
@@ -44,25 +62,6 @@ class AuthController extends Controller
             ], 201);
 
         } catch (ValidationException $e) {
-            // Check if the validation error is due to duplicate device_id
-            if (isset($e->errors()['device_id']) && in_array('The device_id has already been taken.', $e->errors()['device_id'])) {
-                // Fetch the existing user
-                $existingUser = User::where('device_id', $request->device_id)->first();
-
-                // Retrieve an existing token or generate a new one
-                $token = $existingUser->tokens()->first()?->plainTextToken ?? $existingUser->createToken('auth_token')->plainTextToken;
-
-                return response()->json([
-                    'success' => 'success', // Keep success status consistent
-                    'message' => 'Device already registered',
-                    'data' => [
-                        'device_id' => $existingUser->device_id,
-                        'bearer_token' => $token,
-                        'coin_count' => $existingUser->coin_count,
-                    ]
-                ], 200); // Use 200 since it's not a new resource creation
-            }
-
             // Handle other validation errors
             return response()->json([
                 'success' => 'error',

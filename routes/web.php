@@ -48,4 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/setting/{id}', [SettingController::class, 'update'])->name('settings.update');
     Route::delete('/setting/{id}', [SettingController::class, 'destroy'])->name('settings.destroy');
 
+    // purchase Use data
+    Route::get('/purchase', [PurchaseController::class, 'purchaseUser'])->name('purchase.user');
+
 });
