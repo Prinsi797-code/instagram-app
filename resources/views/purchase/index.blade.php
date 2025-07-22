@@ -42,8 +42,9 @@
                                             <td>{{ $purchaseDetail->device_id }}</td>
                                             <td>
                                                 @if ($purchaseDetail->pkg_image_url)
-                                                    <img src="{{ $purchaseDetail->pkg_image_url }}" class="card-img-top"
-                                                        alt="Package Image" style="height: 200px; object-fit: cover;">
+                                                    <img src="{{ asset($purchaseDetail->pkg_image_url) }}"
+                                                        class="card-img-top" alt="Package Image"
+                                                        style="height: 200px; object-fit: cover;">
                                                 @else
                                                     <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center"
                                                         style="height: 200px;">
