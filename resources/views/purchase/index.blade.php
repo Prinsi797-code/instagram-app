@@ -55,7 +55,7 @@
                                             <td>{{ $purchaseDetail->coins }}</td>
                                             <td>{{ $purchaseDetail->giveaway ?? 'None' }}</td>
                                             <td>{{ number_format($purchaseDetail->price_per_coin, 2) }}</td>
-                                            <td>{{ number_format($detail->total_price, 2) }}</td>
+                                            <td>{{ number_format($purchaseDetail->total_price, 2) }}</td>
                                             <td class="td-actions text-right">
                                                 {{-- <div class="form-button-action">
                                                 <a href="{{ route('settings.edit', $purchaseDetail->id) }}"
