@@ -7,6 +7,7 @@ use App\Models\GetCoupon;
 use App\Models\User;
 use Carbon\Exceptions\Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
