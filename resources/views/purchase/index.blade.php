@@ -29,7 +29,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @if ($purchaseDetails->isEmpty())
                                     <div class="alert alert-danger" role="alert">
                                         No purchase details found.
